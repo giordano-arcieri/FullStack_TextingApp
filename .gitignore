@@ -1,5 +1,7 @@
 # Prerequisites
 *.d
+frontend/node_modules
+backend/dependencies
 
 # Compiled Object files
 *.slo
