@@ -4,36 +4,29 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import React from 'react';
+import { useState } from 'react';
 
-function LogIn() {
-    const { focused } = useFormControl() || {};
+type LogInProps = {
+    onUserLogIn: (userName: string) => void;
+};
 
-    const helperText = React.useMemo(() => {
-        if (!focused) {
-            return 'Enter Username';
-        }
-    }, [focused]);
+// Use the type with your component
+function LogIn({ onUserLogIn }: LogInProps) {
+    const [username, setUserName] = useState("");
 
-    return <FormHelperText>{helperText}</FormHelperText>;
-}
-
-export default function UseFormControl() {
-    const [username, setUserName] = React.useState('');
-
-    const handleLogin = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        console.log("New Login:", username); // API call that makes a new user and brings them to the main space
-    };
+    const handleLogin = () => {
+        onUserLogIn(username);
+    }
 
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(event.target.value);
-    };
+    }
 
     return (
         <form noValidate autoComplete="off" onSubmit={handleLogin}>
             { /* The hole website will be this box, and it will be centered.
-            The box contains a login form that upon submission an API will be called
-            that brings the new user to the main space */ }
+             The box contains a login form that upon submission an API will be called
+             that brings the new user to the main space */ }
             <Box
                 sx={{
                     width: '100vw', // Verticle position 
@@ -46,25 +39,35 @@ export default function UseFormControl() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                }}
-            >
+                }}>
+
                 <FormControl sx={{ width: '25ch' }}> { /* Login form */}
-                    <Box
-                        sx={{
-                            width: '100%', display: 'flex', flexDirection: 'column', gap: 1
-                        }}>
-                        <LogIn />
-                        <OutlinedInput
-                            placeholder="Username..."
-                            value={username}
-                            onChange={handleUsernameChange} /* Keeps track of the input */
-                        />
-                        <Button type="submit" variant="contained">Log On</Button>
-                    </Box>
-                </FormControl>
-            </Box >
+                    <HelperText />
+                    <OutlinedInput
+                        placeholder="Username..."
+                        value={username}
+                        onChange={handleUsernameChange} /* Keeps track of the input */
+                    />
+                    <Button type="submit" variant="contained"
+                        sx={{ top: 5 }}>Log On</Button>
+            </FormControl>
+        </Box >
         </form >
-    );
+    )
+
 }
 
+export default LogIn
 
+// Function that checks if the tex box is foucused. If it is it returns nothing and if it isn't it returns "Enter Username"
+function HelperText() {
+    const { focused } = useFormControl() || {};
+
+    const helperText = React.useMemo(() => {
+        if (!focused) {
+            return 'Enter Username';
+        }
+    }, [focused]);
+
+    return <FormHelperText>{helperText}</FormHelperText>;
+}
