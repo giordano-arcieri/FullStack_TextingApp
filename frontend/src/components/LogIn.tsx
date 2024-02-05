@@ -39,9 +39,10 @@ function LogIn({ onUserLogIn }: LogInProps) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    //fontSize: 50,
                 }}>
 
-                <FormControl sx={{ width: '25ch' }}> { /* Login form */}
+                <FormControl sx={{ transform: 'scale(1.5)' }}> { /* Login form */}
                     <HelperText />
                     <OutlinedInput
                         placeholder="Username..."
@@ -50,8 +51,8 @@ function LogIn({ onUserLogIn }: LogInProps) {
                     />
                     <Button type="submit" variant="contained"
                         sx={{ top: 5 }}>Log On</Button>
-            </FormControl>
-        </Box >
+                </FormControl>
+            </Box >
         </form >
     )
 
