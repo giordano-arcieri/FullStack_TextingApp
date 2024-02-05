@@ -19,7 +19,7 @@ function MessageInputBar(
         <Box
             sx={{
                 width: '100%', // Full width of the parent container
-                height: '100%', // Full height of the parent container
+                height: '10%', // 10% height of the parent container
                 display: 'flex',
                 alignItems: 'stretch', // Stretch children to fill the height
                 justifyContent: 'center',
