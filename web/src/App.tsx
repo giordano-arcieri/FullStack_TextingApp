@@ -19,28 +19,33 @@ function App() {
   const [message, setMessage] = useState<string | null>(null);
 
   const onUserLogIn = (username: string) => {
-    console.log("New Login:", username); // API call that makes a new user and brings them to the main space
+    console.log("New Login:", username); 
+    // API call that makes a new user
     setCurrentUser(username);
   }
 
-  const onTextBoxChange = () => {
+  const onTextBoxChange = (textBoxContent: string) => {
     // If the text box changes, update the message
-    console.log("Text Box Changed");
-    setMessage(message);
+    setMessage(textBoxContent);
   }
 
   const onSendButtonClick = () => {
-    console.log("Send Button Clicked"); // API call that sends the message to the selected user
+    console.log("Send Button Clicked"); 
+    console.log("Message: ", message);
+    setMessage(null);
+    // API call that sends the message to the selected user
   }
 
   const onLogOffClick = () => {
     console.log(currentUser, "Logged Off");
     // API call that logs the user off
     setCurrentUser(null);
+    setCurrentSelectedUser(null);
   }
 
-  const onUserSelectorClick = () => {
-    console.log("User Selector");
+  const onNewUserSelector = (newUser: string) => {
+    setCurrentSelectedUser(newUser);
+    console.log("User Selector: ", newUser);
   }
 
   // If there is no current user, show the login page
@@ -57,17 +62,18 @@ function App() {
         height: '98vh',
         display: 'flex',
         flexDirection: 'column', // Stack children as a column
-        lignItems: 'stretch', // Stretch children to fill the width
+        alignItems: 'stretch', // Stretch children to fill the width
         margin: borderPadding
       }}
     >
       <Messages username={currentUser} />
       <MessageInputBar
         currentSelectedUser={currentSelectedUser}
-        onUserSelectorClick={onUserSelectorClick}
+        onNewUserSelector={onNewUserSelector}
         onTextBoxChange={onTextBoxChange}
         onSendButtonClick={onSendButtonClick}
         onLogOffClick={onLogOffClick}
+        message={message || ""}
       />
     </Box>
   );

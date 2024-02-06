@@ -15,15 +15,21 @@ function LogIn({ onUserLogIn }: LogInProps) {
     const [username, setUserName] = useState("");
 
     const handleLogin = () => {
-        onUserLogIn(username);
+        if (validateInput(username)) {
+            onUserLogIn(username);
+        }
     }
 
     const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setUserName(event.target.value);
     }
 
+    const validateInput = (input: string) => {
+        return !input.includes(" ") && input.length > 0;
+    }
+
     return (
-        <form noValidate autoComplete="off" onSubmit={handleLogin}>
+        <form autoComplete="off" onSubmit={handleLogin}>
             { /* The hole website will be this box, and it will be centered.
              The box contains a login form that upon submission an API will be called
              that brings the new user to the main space */ }

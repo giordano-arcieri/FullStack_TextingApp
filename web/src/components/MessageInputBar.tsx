@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@mui/system'
 import UserSelector from './UserSelector'
 import TextBox from './TextBox'
@@ -6,15 +5,16 @@ import SendButton from './SendButton'
 import LogOff from './LogOff'
 
 interface MessageInputBarProps {
-    onTextBoxChange: () => void
+    onTextBoxChange: (textBoxContent: string) => void
     onSendButtonClick: () => void
     onLogOffClick: () => void
-    onUserSelectorClick: () => void
+    onNewUserSelector: (user: string) => void
     currentSelectedUser: string | null
+    message: string
 }
 
 function MessageInputBar(
-    { onTextBoxChange, onSendButtonClick, onLogOffClick, onUserSelectorClick, currentSelectedUser }: MessageInputBarProps) {
+    { onTextBoxChange, onSendButtonClick, onLogOffClick, onNewUserSelector, currentSelectedUser, message }: MessageInputBarProps) {
     return (
         <Box
             sx={{
@@ -26,11 +26,12 @@ function MessageInputBar(
             }}
         >
             <UserSelector
-                onClick={onUserSelectorClick}
+                onNewUserSelector={onNewUserSelector}
                 currentSelectedUser={currentSelectedUser}
             />
             <TextBox
                 onChange={onTextBoxChange}
+                message={message}
             />
             <SendButton
                 onClick={onSendButtonClick}

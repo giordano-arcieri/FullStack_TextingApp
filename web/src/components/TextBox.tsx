@@ -1,7 +1,6 @@
 import { TextField } from "@mui/material"
-import Box from '@mui/material/Box';
 
-export default function TextBox({ onChange }: { onChange: (value: string) => void }) {
+export default function TextBox({ onChange, message }: { onChange: (value: string) => void, message: string }) {
     return (
         <TextField
             sx={{
@@ -13,6 +12,7 @@ export default function TextBox({ onChange }: { onChange: (value: string) => voi
             id="outlined-basic"
             label="Text!"
             variant="outlined"
+            content={message}
             onChange={(e) => onChange(e.target.value)}
         />
     )
