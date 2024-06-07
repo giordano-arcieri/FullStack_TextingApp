@@ -16,7 +16,7 @@ function App() {
   const [currentSelectedUser, setCurrentSelectedUser] = useState<string | null>(null);
 
   // This is the current message that the user is typing and will keep track of what is in the text box
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>("");
 
   const onUserLogIn = (username: string) => {
     console.log("New Login:", username); 
@@ -32,7 +32,7 @@ function App() {
   const onSendButtonClick = () => {
     console.log("Send Button Clicked"); 
     console.log("Message: ", message);
-    setMessage(null);
+    setMessage(" ");
     // API call that sends the message to the selected user
   }
 
@@ -73,7 +73,7 @@ function App() {
         onTextBoxChange={onTextBoxChange}
         onSendButtonClick={onSendButtonClick}
         onLogOffClick={onLogOffClick}
-        message={message || ""}
+        message={message}
       />
     </Box>
   );

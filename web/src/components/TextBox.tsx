@@ -12,7 +12,7 @@ export default function TextBox({ onChange, message }: { onChange: (value: strin
             id="outlined-basic"
             label="Text!"
             variant="outlined"
-            content={message}
+            value={message}
             onChange={(e) => onChange(e.target.value)}
         />
     )

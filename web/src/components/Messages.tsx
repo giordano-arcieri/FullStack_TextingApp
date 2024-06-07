@@ -11,7 +11,7 @@ const Messages = ({ username }: MessagesProps) => {
                 width: '100%', height: '90%', overflow: 'auto', border: '1px solid black',
             }}
         >
-            <h1>{username}</h1>
+            <h1>Username: {username}</h1>
         </Box>
     );
 };
