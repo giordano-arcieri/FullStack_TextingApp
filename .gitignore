@@ -7,7 +7,7 @@ web/.vercel
 server/.vscode/
 server/build/
 #data
-server/data/messages
+server/data/messages/*
 server/data/online_users.json
 #dependencies
 
