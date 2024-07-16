@@ -1,0 +1,5 @@
+{
+    "cmake.sourceDirectory": "/home/giordano-arcieri/Gio/Projects/inProgress/network_programming/server",
+    "cmake.buildDirectory": "${workspaceFolder}/server/build",
+    "cmake.configureOnOpen": true,
+}

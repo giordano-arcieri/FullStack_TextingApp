@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -12,6 +12,20 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
+    const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
+    useEffect(() => {
+        const fetchOnlineUsers = async () => {
+            try {
+                const users = await getOnlineUsers();
+                setOnlineUsers(users);
+            } catch (err) {
+                throw err;
+            }
+        };
+
+        fetchOnlineUsers();
+    }, []);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -26,11 +40,31 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
         onNewUserSelector(user); // Call onSelectUser prop with selected user
     };
 
-    const getOnlineUsers = () => {
-        // API call to get online users
-        return ['User 1', 'User 2', 'User 3', 'User 4'];
-    }
+    async function getOnlineUsers(): Promise<string[]> {
+        const serverUrl = 'http://localhost:8080/get_online_users';
+    
+     
+        console.log('Attempting to fetch online users from:', serverUrl);
+        const response = await fetch(serverUrl, {
+            method: 'GET',
+    
+        });
 
+        let textResponse: string = await response.text(); // Get the raw text response
+        console.log('Raw Response:', textResponse);
+        
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // const data = JSON.parse(textResponse); // Parse the JSON
+        // console.log('Fetched Online Users:', data.users);
+        // return data.users;
+        return ["textResponse"]
+
+    }
+    
     return (
         <>
             <Button
@@ -54,7 +88,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
                     'aria-labelledby': 'basic-button',
                 }}
             >
-                {getOnlineUsers().map((item) => (
+                {onlineUsers.map((item) => (
                     <MenuItem key={item} onClick={() => handleMenuItemClick(item)}>
                         {item}
                     </MenuItem>
@@ -66,4 +100,3 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
 
 export default UserSelector;
 
- 
