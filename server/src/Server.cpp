@@ -17,6 +17,8 @@ using json = nlohmann::json;
 class Handler
 {
 public:
+    // Need to call constructor then init and run for the server to become online.
+    
     explicit Handler(Address address) : httpEndpoint(address) { std::cout << "[SERVER] Server starting..." << std::endl; };
 
     void init(const Http::Endpoint::Options &options)
