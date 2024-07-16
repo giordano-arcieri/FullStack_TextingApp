@@ -1,34 +1,12 @@
-# Prerequisites
-*.d
+#WEB
 web/node_modules
-server/dependencies
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+#SERVER
+#building
+server/.vscode
+server/build
+#data
+server/data/messages
+server/data/online_users.json
+#dependencies
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
