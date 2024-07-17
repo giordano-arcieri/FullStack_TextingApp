@@ -18,10 +18,29 @@ function App() {
   // This is the current message that the user is typing and will keep track of what is in the text box
   const [message, setMessage] = useState<string>("");
 
-  const onUserLogIn = (username: string) => {
-    console.log("New Login:", username); 
-    // API call that makes a new user
+  const onUserLogIn = async (username: string) => {
+
+    // Set the current user to the new user
     setCurrentUser(username);
+
+    // API call to log the user in
+    try {
+      const response = await fetch('http://localhost:9080/newLogin', {
+        method: 'POST',
+        body: JSON.stringify({ username: username })
+      });
+      if (response.status === 201) {
+        const data = await response.text();
+        console.log('Login successful:', data);
+      } else {
+        console.error('Login failed');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+    }
+
+    // Log message
+    console.log("New Login:", JSON.stringify({ username: username }));
   }
 
   const onTextBoxChange = (textBoxContent: string) => {
@@ -29,16 +48,47 @@ function App() {
     setMessage(textBoxContent);
   }
 
-  const onSendButtonClick = () => {
-    console.log("Send Button Clicked"); 
+  const onSendButtonClick = async () => {
+    // API call that sends the message to the selected user
+    try {
+      const response = await fetch('http://localhost:9080/sendMessage', {
+        method: 'POST',
+        body: JSON.stringify({ sender: currentUser, reciver: currentSelectedUser, message: message })
+      });
+      if (response.status === 201) {
+        const data = await response.text();
+        console.log('Message sent successfully:', data);
+      } else {
+        console.error('Message failed to send');
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+
+    console.log("Send Button Clicked");
     console.log("Message: ", message);
     setMessage(" ");
-    // API call that sends the message to the selected user
   }
 
-  const onLogOffClick = () => {
-    console.log(currentUser, "Logged Off");
+  const onLogOffClick = async () => {
     // API call that logs the user off
+    try {
+      const response = await fetch('http://localhost:9080/LogOff', {
+        method: 'DELETE',
+        body: JSON.stringify({ username: currentUser })
+      });
+      if (response.status === 200) {
+        const data = await response.text();
+        console.log('Logoff successful:', data);
+      } else {
+        console.error('Logoff failed');
+      }
+    } catch (error) {
+      console.error('Error during logoff:', error);
+    }
+
+    // Set the current user to null
+    console.log(currentUser, "Logged Off");
     setCurrentUser(null);
     setCurrentSelectedUser(null);
   }

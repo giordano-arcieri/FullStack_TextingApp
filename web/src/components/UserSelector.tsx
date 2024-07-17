@@ -41,30 +41,25 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
     };
 
     async function getOnlineUsers(): Promise<string[]> {
-        const serverUrl = 'http://localhost:8080/get_online_users';
-    
-     
-        console.log('Attempting to fetch online users from:', serverUrl);
-        const response = await fetch(serverUrl, {
-            method: 'GET',
-    
-        });
 
-        let textResponse: string = await response.text(); // Get the raw text response
-        console.log('Raw Response:', textResponse);
-        
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        // API call to get current online users
+        try {
+            const response = await fetch('http://localhost:9080/get_online_users', {
+                method: 'GET',
+            });
+            if (response.status === 200) {
+                const data = await response.json();
+                console.log('Fetched online users:', data["online_users"]);
+                return data["online_users"];
+            } else {
+                console.error('Failed to fetch online users');
+            }
+        } catch (error) {
+            console.error('Error fething online users:', error);
         }
-
-        // const data = JSON.parse(textResponse); // Parse the JSON
-        // console.log('Fetched Online Users:', data.users);
-        // return data.users;
-        return ["textResponse"]
-
+        return [];
     }
-    
+
     return (
         <>
             <Button
