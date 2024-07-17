@@ -18,8 +18,8 @@ class Handler
 {
 public:
     // Need to call constructor then init and run for the server to become online.
-    
-    explicit Handler(Address address) : httpEndpoint(address) { std::cout << "[SERVER] Server starting..." << std::endl; };
+
+    explicit Handler(Address address) : httpEndpoint(address) { std::cout << "[SERVER] Server starting on port: " << address.port().toString() << std::endl; };
 
     void init(const Http::Endpoint::Options &options)
     {
@@ -73,12 +73,27 @@ private:
     {
         using namespace Rest;
 
+        Routes::Options(router, "/*", Routes::bind(&Handler::handleOptions, this));
         Routes::Get(router, "/get_online_users", Routes::bind(&Handler::handleGetOnlineUseres, this));
         Routes::Get(router, "/getMessages", Routes::bind(&Handler::handleGetMessages, this));
         Routes::Post(router, "/newLogin", Routes::bind(&Handler::handleNewLogin, this));
         Routes::Post(router, "/sendMessage", Routes::bind(&Handler::handleSendMessage, this));
         Routes::Delete(router, "/LogOff", Routes::bind(&Handler::handleLogOff, this));
         Routes::Post(router, "/shutdown", Routes::bind(&Handler::handleSutdownRequest, this));
+    }
+
+    void addCorsHeaders(Http::ResponseWriter &response)
+    {
+        response.headers()
+            .add<Http::Header::AccessControlAllowOrigin>("*")
+            .add<Http::Header::AccessControlAllowMethods>("GET, POST, PUT, DELETE, OPTIONS")
+            .add<Http::Header::AccessControlAllowHeaders>("Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+    }
+
+    void handleOptions(const Rest::Request &, Http::ResponseWriter response)
+    {
+        addCorsHeaders(response);
+        response.send(Http::Code::Ok);
     }
 
     void handleGetOnlineUseres(const Rest::Request &request, Http::ResponseWriter response)
@@ -105,6 +120,7 @@ private:
 
         // Send JSON
         std::cout << "[INFO] GET request received sending back JSON of online users:" << json_online_users.dump() << std::endl;
+        addCorsHeaders(response);
         response.send(Http::Code::Ok, json_online_users.dump());
     }
 
@@ -143,6 +159,7 @@ private:
 
         // Send JSON
         std::cout << "[INFO] GET request received sending back JSON of messages:" << json_messages.dump() << std::endl;
+        addCorsHeaders(response);
         response.send(Http::Code::Ok, json_messages.dump());
     }
 
@@ -215,6 +232,7 @@ private:
 
         // Send response
         std::cout << "[INFO] Added new user: " << new_user_info["username"] << std::endl;
+        addCorsHeaders(response);
         response.send(Http::Code::Created, "NewLogin Recived!\n");
     }
 
@@ -272,6 +290,7 @@ private:
 
         // Send response
         std::cout << "[INFO] Added Message: [ " << new_message_info["message"] << " ] to " << new_message_info["reciver"] << std::endl;
+        addCorsHeaders(response);
         response.send(Http::Code::Created, "Message Recived!\n");
     }
 
@@ -339,6 +358,7 @@ private:
 
         // Send response
         std::cout << "[INFO] Deleted " << log_off_info["username"] << std::endl;
+        addCorsHeaders(response);
         response.send(Http::Code::Ok, "User Deleted!\n");
     }
 
