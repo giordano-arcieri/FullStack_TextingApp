@@ -1,2 +1,24 @@
-# network_programming
-There is server and client software. As long as the server program is running you can run as many client programs that connect to the server and each client will be able to communicate with other clients.
+# Web
+This ReadMe is to talk about the frontend part of the application.
+
+## Runing the frontend
+
+Install Dependencies: 
+```
+npm i
+```
+Run dev
+```
+npm run dev
+```
+
+## Runing the backend
+
+Install Dependencies: 
+```
+hey id like all the dep plz
+```
+Run Server
+```
+Hey server please execute
+```
