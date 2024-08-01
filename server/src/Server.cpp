@@ -75,7 +75,7 @@ private:
 
         Routes::Options(router, "/*", Routes::bind(&Handler::handleOptions, this));
         Routes::Get(router, "/get_online_users", Routes::bind(&Handler::handleGetOnlineUseres, this));
-        Routes::Get(router, "/getMessages", Routes::bind(&Handler::handleGetMessages, this));
+        Routes::Get(router, "/getMessages/:username", Routes::bind(&Handler::handleGetMessages, this));
         Routes::Post(router, "/newLogin", Routes::bind(&Handler::handleNewLogin, this));
         Routes::Post(router, "/sendMessage", Routes::bind(&Handler::handleSendMessage, this));
         Routes::Delete(router, "/LogOff", Routes::bind(&Handler::handleLogOff, this));
@@ -109,6 +109,7 @@ private:
         if (!file_online_users.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -129,16 +130,17 @@ private:
         std::lock_guard<std::mutex> guard(mutex_);
 
         // Get file path of messages
-        json user_info = json::parse(request.body());
+        std::string username = request.param(":username").as<std::string>();
         std::string messages_file_path = DATA_FOLDER;
         messages_file_path += "messages/";
-        messages_file_path += user_info["username"];
+        messages_file_path += username;
         messages_file_path += ".json";
 
         // Check if file exists
         if (!std::filesystem::exists(messages_file_path))
         {
-            std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            std::cerr << "[ERROR] Unable to open database file." << username << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Bad_Request, "Non existing user\n");
             return;
         }
@@ -148,6 +150,7 @@ private:
         if (!file_messages.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -179,6 +182,7 @@ private:
         if (!iFile_online_users.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -194,6 +198,7 @@ private:
             if (user == new_user_info["username"])
             {
                 std::cerr << "[ERROR] User already exists." << std::endl;
+                addCorsHeaders(response);
                 response.send(Http::Code::Conflict, "User already exists\n");
                 return;
             }
@@ -207,6 +212,7 @@ private:
         if (!oFile_online_users.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -222,6 +228,7 @@ private:
         if (!file_messages.is_open())
         {
             std::cerr << "[ERROR] Unable to create user message file for new user." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -243,50 +250,87 @@ private:
         // Updload request to JSON
         json new_message_info = json::parse(request.body());
 
-        // Get file path for messages
-        std::string messages_file_path = DATA_FOLDER;
-        messages_file_path += "messages/";
-        messages_file_path += new_message_info["reciver"];
-        messages_file_path += ".json";
+        // Get file paths for messages
+        std::string messages_reciver_file_path = DATA_FOLDER;
+        std::string messages_sender_file_path = DATA_FOLDER;
+        messages_reciver_file_path += "messages/";
+        messages_reciver_file_path += new_message_info["reciver"];
+        messages_reciver_file_path += ".json";     
+        messages_sender_file_path += "messages/";
+        messages_sender_file_path += new_message_info["sender"];
+        messages_sender_file_path += ".json";
 
-        // Check if file exists
-        if (!std::filesystem::exists(messages_file_path))
+        // Check if files exists
+        if (!std::filesystem::exists(messages_reciver_file_path))
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
+            response.send(Http::Code::Bad_Request, "Tried to send message to non existing user\n");
+            return;
+        }        
+        if (!std::filesystem::exists(messages_sender_file_path))
+        {
+            std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Bad_Request, "Tried to send message to non existing user\n");
             return;
         }
 
-        // Open file
-        std::ifstream iFile_messages(messages_file_path);
-        if (!iFile_messages.is_open())
+        // Open files
+        std::ifstream iFile_reciver_messages(messages_reciver_file_path);
+        if (!iFile_reciver_messages.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
+            response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
+            return;
+        }
+        std::ifstream iFile_sender_messages(messages_sender_file_path);
+        if (!iFile_sender_messages.is_open())
+        {
+            std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
 
         // Upload data to JSON
-        json json_user_messages;
-        iFile_messages >> json_user_messages;
-        iFile_messages.close();
+        json json_reciver_messages;
+        iFile_reciver_messages >> json_reciver_messages;
+        iFile_reciver_messages.close();       
+        json json_sender_messages;
+        iFile_sender_messages >> json_sender_messages;
+        iFile_sender_messages.close();
 
         // Add message to JSON
         json new_message;
         new_message["sender"] = new_message_info["sender"];
         new_message["content"] = new_message_info["message"];
-        json_user_messages["messages"].push_back(new_message);
+        json_sender_messages["messages"].push_back(new_message);        
+        json_reciver_messages["messages"].push_back(new_message);        
+
 
         // Save JSON to file
-        std::ofstream oFile_messages(messages_file_path);
-        if (!oFile_messages.is_open())
+        std::ofstream oFile_reciver_messages(messages_reciver_file_path);
+        std::ofstream oFile_sender_messages(messages_sender_file_path);
+        if (!oFile_reciver_messages.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
-        oFile_messages << json_user_messages.dump(4);
-        oFile_messages.close();
+        oFile_reciver_messages << json_reciver_messages.dump(4);
+        oFile_reciver_messages.close();
+        if (!oFile_sender_messages.is_open())
+        {
+            std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
+            response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
+            return;
+        }
+        oFile_sender_messages << json_sender_messages.dump(4);
+        oFile_sender_messages.close();
 
         // Send response
         std::cout << "[INFO] Added Message: [ " << new_message_info["message"] << " ] to " << new_message_info["reciver"] << std::endl;
@@ -310,6 +354,7 @@ private:
         if (!iFile_online_users.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
@@ -331,6 +376,7 @@ private:
         if (!user_exists)
         {
             std::cerr << "[ERROR] User does not exist." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Bad_Request, "User does not exist\n");
             return;
         }
@@ -340,6 +386,7 @@ private:
         if (!oFile_online_users.is_open())
         {
             std::cerr << "[ERROR] Unable to open database file." << std::endl;
+            addCorsHeaders(response);
             response.send(Http::Code::Internal_Server_Error, "Internal Server Error\n");
             return;
         }
