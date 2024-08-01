@@ -14,20 +14,17 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
     const open = Boolean(anchorEl);
     const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
 
-    useEffect(() => {
-        const fetchOnlineUsers = async () => {
-            try {
-                const users = await getOnlineUsers();
-                setOnlineUsers(users);
-            } catch (err) {
-                throw err;
-            }
-        };
-
-        fetchOnlineUsers();
-    }, []);
+    const fetchOnlineUsers = async () => {
+        try {
+            const users = await getOnlineUsers();
+            setOnlineUsers(users);
+        } catch (err) {
+            throw err;
+        }
+    };
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        fetchOnlineUsers();
         setAnchorEl(event.currentTarget);
     };
 
