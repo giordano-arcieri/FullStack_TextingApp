@@ -10,7 +10,7 @@
 using namespace Pistache;
 using json = nlohmann::json;
 
-#define DATA_FOLDER "/home/giordano-arcieri/Gio/Projects/inProgress/network_programming/server/data/";
+#define DATA_FOLDER "/home/giordano-arcieri/Gio/Projects/inProgress/FullStack_TextingApp/server/data/";
 #define ONLINE_USERES_FILE_NAME "online_users.json";
 #define PORT 9080
 
