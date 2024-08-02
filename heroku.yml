@@ -5,4 +5,4 @@ build:
 # If you have a specific run command, you can define it here.
 # If you don't include this section, Heroku will use the CMD from your Dockerfile.
 run:
-  web: .server/server
+  web: ./server/build/server
