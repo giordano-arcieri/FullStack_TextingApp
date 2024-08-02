@@ -47,7 +47,6 @@ RUN git clone https://github.com/pistacheio/pistache.git && \
 # Copy the current directory contents into the container at /usr/src/app
 COPY data ./data
 COPY src ./src
-COPY include ./include
 COPY CMakeLists.txt .
 
 
