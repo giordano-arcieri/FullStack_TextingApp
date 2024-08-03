@@ -59,7 +59,7 @@ RUN cmake ..
 RUN cmake --build .
 
 # Make port 8080 available to the world outside this container
-EXPOSE 9080
+EXPOSE 8080
 
 # Run the main binary
 CMD ["./server"]

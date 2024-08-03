@@ -12,7 +12,7 @@ using json = nlohmann::json;
 
 #define DATA_FOLDER "../data/";
 #define ONLINE_USERES_FILE_NAME "online_users.json";
-#define PORT 9080
+
 
 class Handler
 {
@@ -445,6 +445,8 @@ int main()
     file_online_users.close();
 
     // Start Server
+    const char* sPort = std::getenv("PORT");
+    int PORT = sPort ? std::stoi(sPort) : 8080;
     Http::Endpoint::Options options = Http::Endpoint::options().threads(1);
     Address address(Ipv4::any(), Port(PORT));
 
