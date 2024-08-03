@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import { BASE_URL } from '../App';
 
 interface MessagesProps {
     username: string;
@@ -18,7 +19,7 @@ const Messages = ({ username }: MessagesProps) => {
     const [messages, setMessages] = useState<Message[]>([]);
 
     const getMessages = async (): Promise<Message[]> => {
-        const URL: string = 'http://localhost:9080/getMessages/' + username;
+        const URL: string = BASE_URL + 'getMessages/' + username;
         console.log('Fetching messages for:', JSON.stringify({ username: username }));
         try {
             const response = await fetch(URL, {

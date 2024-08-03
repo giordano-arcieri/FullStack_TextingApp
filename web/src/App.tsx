@@ -5,6 +5,8 @@ import MessageInputBar from './components/MessageInputBar';
 import Messages from './components/Messages';
 import { Box } from '@mui/material';
 
+export const BASE_URL = 'https://giordano-texting-server-e2397fedc6d0.herokuapp.com/';
+
 function App() {
 
   const borderPadding = 0.5;   // Border Padding
@@ -25,7 +27,7 @@ function App() {
 
     // API call to log the user in
     try {
-      const response = await fetch('http://localhost:9080/newLogin', {
+      const response = await fetch(BASE_URL + 'newLogin', {
         method: 'POST',
         body: JSON.stringify({ username: username })
       });
@@ -51,7 +53,7 @@ function App() {
   const onSendButtonClick = async () => {
     // API call that sends the message to the selected user
     try {
-      const response = await fetch('http://localhost:9080/sendMessage', {
+      const response = await fetch(BASE_URL + 'sendMessage', {
         method: 'POST',
         body: JSON.stringify({ sender: currentUser, reciver: currentSelectedUser, message: message })
       });
@@ -73,7 +75,7 @@ function App() {
   const onLogOffClick = async () => {
     // API call that logs the user off
     try {
-      const response = await fetch('http://localhost:9080/LogOff', {
+      const response = await fetch(BASE_URL + 'LogOff', {
         method: 'DELETE',
         body: JSON.stringify({ username: currentUser })
       });

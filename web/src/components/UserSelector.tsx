@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import { BASE_URL } from '../App';
 
 interface UserSelectorProps {
     currentSelectedUser: string | null;
@@ -41,7 +42,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ currentSelectedUser, onNewU
 
         // API call to get current online users
         try {
-            const response = await fetch('http://localhost:9080/get_online_users', {
+            const response = await fetch(BASE_URL + 'get_online_users', {
                 method: 'GET',
             });
             if (response.status === 200) {
